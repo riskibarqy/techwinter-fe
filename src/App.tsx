@@ -1,87 +1,67 @@
 import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { SignedIn, useUser } from '@clerk/clerk-react';
+import { motion } from 'framer-motion';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import CategoryFilter from './components/CategoryFilter';
-import ProductCard from './components/ProductCard';
-import ProductModal from './components/ProductModal';
 import Cart from './components/Cart';
-import { products } from './data/products';
-import { Product } from './types/product';
+import Shop from './pages/Shop';
+import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { user } = useUser();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const isAdmin = user?.publicMetadata?.role === 'admin';
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-black">
+      <motion.div 
+        className="min-h-screen bg-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <Header 
           onCartClick={() => setIsCartOpen(true)}
           onSearch={setSearchQuery}
         />
         
-        <Hero />
-        
-        <CategoryFilter
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
-        
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {searchQuery && (
-            <div className="mb-6">
-              <p className="text-white text-lg">
-                Search results for "{searchQuery}" ({filteredProducts.length} products)
-              </p>
-            </div>
-          )}
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={setSelectedProduct}
-              />
-            ))}
-          </div>
-          
-          {filteredProducts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-400 text-lg">No products found</p>
-            </div>
-          )}
-        </main>
+        <Routes>
+          <Route path="/" element={<Shop searchQuery={searchQuery} />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <SignedIn>
+                <Dashboard />
+              </SignedIn>
+            } 
+          />
+          <Route 
+            path="/admin" 
+            element={
+              <SignedIn>
+                {isAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" />}
+              </SignedIn>
+            } 
+          />
+          <Route path="/about" element={<div className="min-h-screen bg-black pt-20 flex items-center justify-center"><h1 className="text-white text-2xl">About Page</h1></div>} />
+          <Route path="/contact" element={<div className="min-h-screen bg-black pt-20 flex items-center justify-center"><h1 className="text-white text-2xl">Contact Page</h1></div>} />
+        </Routes>
         
         <Cart
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
         />
         
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            isOpen={!!selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
-        
         <footer className="bg-gray-900 border-t border-gray-800 mt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
-                <h3 className="text-white font-bold text-lg mb-4">TECH<span className="text-red-500">WINTER</span></h3>
-                <p className="text-gray-400">Premium streetwear for those who dare to be different.</p>
+                <h3 className="text-white font-bold text-lg mb-4">TECH<span className="text-blue-500">WINTER</span></h3>
+                <p className="text-gray-400">Where technology meets style in premium fashion.</p>
               </div>
               
               <div>
@@ -117,7 +97,7 @@ function App() {
             </div>
           </div>
         </footer>
-      </div>
+      </motion.div>
     </CartProvider>
   );
 }

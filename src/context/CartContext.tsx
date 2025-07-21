@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { CartItem, Product, CartContextType } from '../types/product';
+import { Product } from '../types/product';
+import { CartItem, CartContextType } from '../types/cartItem';
 
 type CartAction = 
   | { type: 'ADD_TO_CART'; payload: { product: Product; size?: string; color?: string } }
@@ -36,7 +37,16 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
       return {
         ...state,
-        items: [...state.items, { ...product, quantity: 1, selectedSize: size, selectedColor: color }]
+        items: [
+          ...state.items,
+          {
+            ...product,
+            productId: product.id,
+            quantity: 1,
+            selectedSize: size || '',
+            selectedColor: color || ''
+          }
+        ]
       };
     }
     

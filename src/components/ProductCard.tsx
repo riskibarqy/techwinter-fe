@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Product } from '../types/product';
 import { useCart } from '../context/CartContext';
 
@@ -16,16 +17,21 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
   };
 
   return (
-    <div 
+    <motion.div 
       className="group cursor-pointer"
       onClick={() => onClick(product)}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
     >
       <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
         <div className="relative overflow-hidden">
-          <img
+          <motion.img
             src={product.image}
             alt={product.name}
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            whileHover={{ scale: 1.05 }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300" />
           {!product.inStock && (
@@ -36,7 +42,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         </div>
         
         <div className="p-4">
-          <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-red-400 transition-colors">
+          <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
             {product.name}
           </h3>
           <p className="text-gray-400 text-sm mb-3 line-clamp-2">
@@ -49,19 +55,21 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             </span>
             
             {product.inStock && (
-              <button
+              <motion.button
                 onClick={handleAddToCart}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 hover:shadow-lg"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 hover:shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Add to Cart
-              </button>
+              </motion.button>
             )}
           </div>
           
           {product.colors && product.colors.length > 0 && (
             <div className="flex space-x-2 mt-3">
               {product.colors.slice(0, 3).map((color, index) => (
-                <div
+                <motion.div
                   key={index}
                   className={`w-4 h-4 rounded-full border border-gray-600 ${
                     color.toLowerCase() === 'black' ? 'bg-black' :
@@ -74,12 +82,13 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
                     'bg-gray-400'
                   }`}
                   title={color}
+                  whileHover={{ scale: 1.2 }}
                 />
               ))}
             </div>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

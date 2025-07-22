@@ -3,7 +3,7 @@ import { ShoppingBag, Search, Menu, X, User, Settings, LogOut } from 'lucide-rea
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+// import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useCart } from '../context/CartContext';
 
 interface HeaderProps {
@@ -31,7 +31,7 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/">
-              <motion.h1 
+              <motion.h1
                 className="text-2xl font-bold text-white tracking-wider cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -49,8 +49,8 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
           </nav>
 
           {/* Search Bar */}
-          <motion.form 
-            onSubmit={handleSearchSubmit} 
+          <motion.form
+            onSubmit={handleSearchSubmit}
             className="hidden md:flex items-center"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -72,8 +72,8 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            
+            {/* <ThemeToggle /> */}
+
             {isSignedIn ? (
               <div className="relative">
                 <button
@@ -83,7 +83,7 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
                   <User className="h-6 w-6" />
                   <span className="hidden md:block">{user.firstName}</span>
                 </button>
-                
+
                 <AnimatePresence>
                   {isUserMenuOpen && (
                     <motion.div
@@ -118,20 +118,10 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <SignInButton mode="modal">
-                  <button className="text-gray-300 hover:text-white transition-colors px-3 py-1 rounded">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors">
-                    Sign Up
-                  </button>
-                </SignUpButton>
               </div>
             )}
-            
-            <motion.button 
+
+            <motion.button
               onClick={onCartClick}
               className="text-gray-300 hover:text-white transition-colors relative"
               whileHover={{ scale: 1.1 }}
@@ -139,7 +129,7 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
             >
               <ShoppingBag className="h-6 w-6" />
               {itemCount > 0 && (
-                <motion.span 
+                <motion.span
                   className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -163,44 +153,78 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
-              className="md:hidden border-t border-gray-800"
+            <motion.div
+              className="md:hidden border-t border-gray-800 bg-black"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
             >
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <form onSubmit={handleSearchSubmit} className="mb-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-900 text-white placeholder-gray-400 border border-gray-700 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:border-blue-500"
-                  />
-                  <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <Search className="h-4 w-4 text-gray-400" />
-                  </button>
-                </div>
-              </form>
-              
-              <Link to="/" className="block px-3 py-2 text-gray-300 hover:text-white">Shop</Link>
-              <Link to="/about" className="block px-3 py-2 text-gray-300 hover:text-white">About</Link>
-              <Link to="/contact" className="block px-3 py-2 text-gray-300 hover:text-white">Contact</Link>
-              
-              {isSignedIn && (
-                <>
-                  <Link to="/dashboard" className="block px-3 py-2 text-gray-300 hover:text-white">Dashboard</Link>
-                  {isAdmin && (
-                    <Link to="/admin" className="block px-3 py-2 text-gray-300 hover:text-white">Admin Panel</Link>
-                  )}
-                </>
-              )}
-            </div>
+              <div className="px-4 py-4 space-y-3">
+                {/* Mobile search */}
+                <form onSubmit={handleSearchSubmit}>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-gray-900 text-white placeholder-gray-400 border border-gray-700 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:border-blue-500"
+                    />
+                    <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </button>
+                  </div>
+                </form>
+
+                {/* Links */}
+                {[
+                  { to: '/', label: 'Shop' },
+                  { to: '/about', label: 'About' },
+                  { to: '/contact', label: 'Contact' },
+                ].map(({ to, label }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block text-gray-300 hover:text-white"
+                  >
+                    {label}
+                  </Link>
+                ))}
+
+                {/* Signed in user options */}
+                {isSignedIn && (
+                  <>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Dashboard</Link>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Admin Panel</Link>
+                    )}
+                    <div className="pt-2 border-t border-gray-700">
+                      <UserButton afterSignOutUrl="/" />
+                    </div>
+                  </>
+                )}
+
+                {!isSignedIn && (
+                  <div className="flex gap-2">
+                    <SignInButton mode="modal">
+                      <button className="flex-1 text-gray-300 hover:text-white border px-3 py-1 rounded">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </div>
+                )}
+
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
+
       </div>
     </header>
   );

@@ -1,0 +1,38 @@
+{
+  "navigation": {
+    "shop": "Shop",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "admin": "Admin Panel"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out"
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "price": "Price",
+    "size": "Size",
+    "color": "Color"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "checkout": "Checkout",
+    "clearCart": "Clear Cart",
+    "total": "Total"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Try Again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  }
+}

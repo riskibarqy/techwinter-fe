@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Search, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, Settings, LogOut } from 'lucide-react';
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useCart } from '../context/CartContext';
 
 interface HeaderProps {
@@ -71,6 +72,8 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            
             {isSignedIn ? (
               <div className="relative">
                 <button

@@ -2,7 +2,6 @@ import React from 'react';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
-import { CartItem } from '../types/cartItem';
 
 interface CartProps {
   isOpen: boolean;
@@ -67,7 +66,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {items.map((item : CartItem) => (
+                    {items.map((item) => (
                       <motion.div 
                         key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} 
                         className="bg-gray-800 rounded-lg p-4"

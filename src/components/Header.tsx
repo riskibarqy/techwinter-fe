@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Search, Menu, X, User, Settings, LogOut } from 'lucide-react';
-import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/clerk-react';
+import { ShoppingBag, Search, Menu, X } from 'lucide-react';
+import { UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 // import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useCart } from '../context/CartContext';
+import { AuthIconButton } from './AuthIconButton';
 
 interface HeaderProps {
   onCartClick: () => void;
@@ -15,13 +16,16 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
   const { itemCount } = useCart();
   const { isSignedIn, user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
   };
+
+  onCartClick = () => {
+    console.log('Cart clicked');
+  }
 
   const isAdmin = user?.publicMetadata?.role === 'admin';
   return (
@@ -43,6 +47,15 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
+            {/* Signed in user options */}
+            {isSignedIn && (
+              <>
+                <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Dashboard</Link>
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Admin Panel</Link>
+                )}
+              </>
+            )}
             <Link to="/" className="text-gray-300 hover:text-white transition-colors">Shop</Link>
             <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
             <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link>
@@ -74,53 +87,6 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
           <div className="flex items-center space-x-4">
             {/* <ThemeToggle /> */}
 
-            {isSignedIn ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="text-gray-300 hover:text-white transition-colors flex items-center space-x-2"
-                >
-                  <User className="h-6 w-6" />
-                  <span className="hidden md:block">{user.firstName}</span>
-                </button>
-
-                <AnimatePresence>
-                  {isUserMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg"
-                    >
-                      <div className="py-2">
-                        <Link
-                          to="/dashboard"
-                          className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          Dashboard
-                        </Link>
-                        {isAdmin && (
-                          <Link
-                            to="/admin"
-                            className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            Admin Panel
-                          </Link>
-                        )}
-                        <div className="border-t border-gray-700 my-2"></div>
-                        <UserButton afterSignOutUrl="/" />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-              </div>
-            )}
-
             <motion.button
               onClick={onCartClick}
               className="text-gray-300 hover:text-white transition-colors relative"
@@ -139,6 +105,12 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
                 </motion.span>
               )}
             </motion.button>
+
+            {isSignedIn ? (
+              <UserButton afterSignOutUrl="/" />
+            ) : (
+              <AuthIconButton />
+            )}
 
             {/* Mobile menu button */}
             <button
@@ -176,6 +148,16 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
                   </div>
                 </form>
 
+                {/* Signed in user options */}
+                {isSignedIn && (
+                  <>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Dashboard</Link>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Admin Panel</Link>
+                    )}
+                  </>
+                )}
+
                 {/* Links */}
                 {[
                   { to: '/', label: 'Shop' },
@@ -191,34 +173,6 @@ export default function Header({ onCartClick, onSearch }: HeaderProps) {
                     {label}
                   </Link>
                 ))}
-
-                {/* Signed in user options */}
-                {isSignedIn && (
-                  <>
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Dashboard</Link>
-                    {isAdmin && (
-                      <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block text-gray-300 hover:text-white">Admin Panel</Link>
-                    )}
-                    <div className="pt-2 border-t border-gray-700">
-                      <UserButton afterSignOutUrl="/" />
-                    </div>
-                  </>
-                )}
-
-                {!isSignedIn && (
-                  <div className="flex gap-2">
-                    <SignInButton mode="modal">
-                      <button className="flex-1 text-gray-300 hover:text-white border px-3 py-1 rounded">
-                        Sign In
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                      <button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-                        Sign Up
-                      </button>
-                    </SignUpButton>
-                  </div>
-                )}
 
               </div>
             </motion.div>

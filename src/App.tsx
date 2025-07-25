@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 import { DefaultLayout } from '@/layouts/DefaultLayout';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import Shop from '@/pages/Shop';
 import Dashboard from '@/pages/Dashboard';
 import AdminDashboard from '@/pages/AdminDashboard';
 import { LoadingPage } from '@/components/ui/LoadingSpinner';
+import PostAuthSignIn from './pages/PostAuth/SignIn';
+import PostAuthSignUp from './pages/PostAuth/SignUp';
 
 function App() {
   const { isLoaded } = useUser();
@@ -54,6 +56,8 @@ function App() {
           </DefaultLayout>
         } 
       />
+      <Route path="/post-auth/sign-in" element={<PostAuthSignIn />} />
+      <Route path="/post-auth/sign-up" element={<PostAuthSignUp />} />
     </Routes>
   );
 }
